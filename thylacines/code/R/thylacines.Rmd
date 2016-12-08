@@ -1,0 +1,53 @@
+---
+title: "Mapping Thyacine “Sightings” in Tasmania"
+author: "Neil Saunders"
+date: "08/12/2016"
+output: 
+  html_document: 
+    highlight: pygments
+    theme: flatly
+    toc: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE, tidy = TRUE, fig.path = "../../output/")
+library(ggmap)
+library(readr)
+```
+
+## Introduction
+This document uses data from the [Atlas of Living Australia](http://www.ala.org.au/) to map alleged, unverified sighting of thylacines in Tasmania.
+
+## Getting the data
+Start by searching the ALA website for "thylacine" and following the [occurrences link](http://biocache.ala.org.au/occurrences/search?q=lsid:urn:lsid:biodiversity.org.au:afd.taxon:97764bed-9492-4066-a45f-e5b0c6c4280d). From the map page, download a zip file which contains occurrence data in CSV format.
+
+Next, read the CSV file into R and select those records where _basisOfRecord_ is _HumanObservation_.
+
+```{r get-data}
+records_2016_12_01 <- read_csv("../../data/records-2016-12-01.csv")
+obs <- subset(records_2016_12_01, basisOfRecord == "HumanObservation")
+```
+
+## Mapping
+Fetch a map of Tasmania and overlay the observations as a density heatmap.
+
+```{r map-data}
+Tas <- get_map("Tasmania", zoom = 7, maptype = "roadmap")
+Tas.map <- ggmap(Tas)
+Tas.map <- Tas.map + stat_density_2d(bins = 20, geom = "polygon", size = 2, data = obs, aes(x = decimalLongitude, y = decimalLatitude, alpha = ..level.., fill = ..level..))
+Tas.map <- Tas.map + scale_fill_gradient(low = "orange", high = "red", guide = FALSE) + scale_alpha(range = c(0.02, 0.8), guide = FALSE) + xlab("") + ylab("")
+Tas.map
+```
+
+## Summary
+Sightings are clearly concentrated in the far north-east of the state. There is also a second, less-dense diffuse region of sightings in the north-west.
+
+Here's Wilf Batty in 1930 with the last known thylacine in the wild.
+
+![](https://upload.wikimedia.org/wikipedia/commons/c/c9/Wilf_Batty_last_wild_Thylacine.jpg)
+
+And here's "Benjamin" in 1933, the last known thylacine anywhere who died in 1936.
+
+![](https://upload.wikimedia.org/wikipedia/commons/4/47/%22Benjamin%22.jpg)
+
+There is no evidence other than alleged sightings (_e.g._ scats, roadkill, DNA) to suggest that thylacines still live in Tasmania. But we would like to believe.
