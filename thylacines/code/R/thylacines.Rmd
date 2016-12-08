@@ -35,7 +35,7 @@ Fetch a map of Tasmania and overlay the observations as a density heatmap.
 Tas <- get_map("Tasmania", zoom = 7, maptype = "roadmap")
 Tas.map <- ggmap(Tas)
 Tas.map <- Tas.map + stat_density_2d(bins = 20, geom = "polygon", size = 2, data = obs, aes(x = decimalLongitude, y = decimalLatitude, alpha = ..level.., fill = ..level..))
-Tas.map <- Tas.map + scale_fill_gradient(low = "orange", high = "red", guide = FALSE) + scale_alpha(range = c(0.02, 0.8), guide = FALSE) + xlab("") + ylab("")
+Tas.map <- Tas.map + scale_fill_gradient(low = "orange", high = "red", guide = FALSE) + scale_alpha(range = c(0.02, 0.8), guide = FALSE) + labs(x = NULL, y = NULL, title = "Thylacine sightings in Tasmania ALA data")
 Tas.map
 ```
 
