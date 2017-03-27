@@ -1,0 +1,2 @@
+*.Rmd linguist-language=R
+thylacines/code/R/*.html linguist-documentation
